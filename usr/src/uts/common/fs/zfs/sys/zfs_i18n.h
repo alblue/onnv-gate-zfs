@@ -18,44 +18,54 @@
  *
  * CDDL HEADER END
  */
+
 /*
  * Copyright 2007 Sun Microsystems, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-#ifndef	_ACL_COMMON_H
-#define	_ACL_COMMON_H
+#ifndef _SYS_ZFS_I18N_H
+#define	_SYS_ZFS_I18N_H
 
 #pragma ident	"%Z%%M%	%I%	%E% SMI"
 
-
-#include <sys/types.h>
-#include <sys/acl.h>
-#include <sys/stat.h>
+#include <sys/sunddi.h>
 
 #ifdef	__cplusplus
 extern "C" {
 #endif
 
-extern ace_t trivial_acl[6];
+/*
+ * z_case behaviors
+ *	The first two describe the extent of case insensitivity.
+ *	The third describes matching behavior when mixed sensitivity
+ *	is allowed.
+ */
+#define	ZFS_CI_ONLY	0x01		/* all lookups case-insensitive */
+#define	ZFS_CI_MIXD	0x02		/* some lookups case-insensitive */
 
-extern int acltrivial(const char *);
-extern void adjust_ace_pair(ace_t *pair, mode_t mode);
-extern void adjust_ace_pair_common(void *, size_t, size_t, mode_t);
-extern int ace_trivial(ace_t *acep, int aclcnt);
-extern int ace_trivial_common(void *, int,
-    uint64_t (*walk)(void *, uint64_t, int aclcnt, uint16_t *, uint16_t *,
-    uint32_t *mask));
-extern acl_t *acl_alloc(acl_type_t);
-extern void acl_free(acl_t *aclp);
-extern int acl_translate(acl_t *aclp, int target_flavor,
-    int isdir, uid_t owner, gid_t group);
-void ksort(caddr_t v, int n, int s, int (*f)());
-int cmp2acls(void *a, void *b);
+/*
+ * ZFS_UTF8_ONLY
+ *	If set, the file system should reject non-utf8 characters in names.
+ */
+#define	ZFS_UTF8_ONLY	0x04
 
+enum zfs_case {
+	ZFS_CASE_SENSITIVE,
+	ZFS_CASE_INSENSITIVE,
+	ZFS_CASE_MIXED
+};
+
+enum zfs_normal {
+	ZFS_NORMALIZE_NONE,
+	ZFS_NORMALIZE_D,
+	ZFS_NORMALIZE_KC,
+	ZFS_NORMALIZE_C,
+	ZFS_NORMALIZE_KD
+};
 
 #ifdef	__cplusplus
 }
 #endif
 
-#endif /* _ACL_COMMON_H */
+#endif	/* _SYS_ZFS_I18N_H */

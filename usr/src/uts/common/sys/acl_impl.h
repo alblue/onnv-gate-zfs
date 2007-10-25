@@ -23,39 +23,39 @@
  * Use is subject to license terms.
  */
 
-#ifndef	_ACL_COMMON_H
-#define	_ACL_COMMON_H
+#ifndef _SYS_ACL_IMPL_H
+#define	_SYS_ACL_IMPL_H
 
 #pragma ident	"%Z%%M%	%I%	%E% SMI"
-
-
-#include <sys/types.h>
-#include <sys/acl.h>
-#include <sys/stat.h>
 
 #ifdef	__cplusplus
 extern "C" {
 #endif
 
-extern ace_t trivial_acl[6];
+/*
+ * acl flags
+ *
+ * ACL_AUTO_INHERIT, ACL_PROTECTED and ACL_DEFAULTED
+ * flags can also be stored in this field.
+ */
+#define	ACL_IS_TRIVIAL	0x10000
+#define	ACL_IS_DIR	0x20000
 
-extern int acltrivial(const char *);
-extern void adjust_ace_pair(ace_t *pair, mode_t mode);
-extern void adjust_ace_pair_common(void *, size_t, size_t, mode_t);
-extern int ace_trivial(ace_t *acep, int aclcnt);
-extern int ace_trivial_common(void *, int,
-    uint64_t (*walk)(void *, uint64_t, int aclcnt, uint16_t *, uint16_t *,
-    uint32_t *mask));
-extern acl_t *acl_alloc(acl_type_t);
-extern void acl_free(acl_t *aclp);
-extern int acl_translate(acl_t *aclp, int target_flavor,
-    int isdir, uid_t owner, gid_t group);
-void ksort(caddr_t v, int n, int s, int (*f)());
-int cmp2acls(void *a, void *b);
+typedef enum acl_type {
+	ACLENT_T = 0,
+	ACE_T = 1
+} acl_type_t;
 
+struct acl_info {
+	acl_type_t acl_type;		/* style of acl */
+	int acl_cnt;			/* number of acl entries */
+	int acl_entry_size;		/* sizeof acl entry */
+	int acl_flags;			/* special flags about acl */
+	void *acl_aclp;			/* the acl */
+};
 
 #ifdef	__cplusplus
 }
 #endif
 
-#endif /* _ACL_COMMON_H */
+#endif /* _SYS_ACL_IMPL_H */
